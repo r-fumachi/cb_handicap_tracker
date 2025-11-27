@@ -1,7 +1,6 @@
 import streamlit as st
 import requests
 from postgrest import PostgrestClient
-from storage3 import StorageClient
 from supabase_auth import SupabaseAuth
 
 SUPABASE_URL = st.secrets["SUPABASE_URL"]
