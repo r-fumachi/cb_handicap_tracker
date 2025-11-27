@@ -6,7 +6,7 @@ from os import path, getcwd
 from commons import parse_time_to_minutes, CURRENT_TIME
 from cloudbet.search import searchSaveGameData
 from utils.local_store import save_state_json, delete_state_json, LOCAL_STATE_FILENAME
-from database.client import supabaseclient as init_session_data_from_db, upload_to_storage, db
+from database.client import init_session_data_from_db, upload_to_storage, db
 
 # recordspath = path.join(getcwd(),path.join('cbData','gameRecords'))
 
