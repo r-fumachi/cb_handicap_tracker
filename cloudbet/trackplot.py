@@ -6,7 +6,7 @@ from os import path, getcwd
 from commons import parse_time_to_minutes, CURRENT_TIME
 from cloudbet.search import searchSaveGameData
 from utils.local_store import save_state_json, delete_state_json, LOCAL_STATE_FILENAME
-from database.client import supabaseclient as init_session_data_from_db, storage, db
+from database.client import supabaseclient as init_session_data_from_db, upload_to_storage, db
 
 # recordspath = path.join(getcwd(),path.join('cbData','gameRecords'))
 
@@ -223,14 +223,7 @@ def export_event_csv(event_id, bucket_name="cbData", folder_name="gameRecords"):
     remote_path = f"{folder_name}/{filename}"
 
     # 5. Upload CSV to Supabase Storage (overwrites existing)
-    storage.from_(bucket_name).upload(
-        path=remote_path,
-        file=csv_bytes,
-        file_options={"content-type": "text/csv"},
-        upsert=True
-    )
-
-
+    upload_to_storage(bucket_name, remote_path, csv_bytes)
 
     st.success(f"CSV saved to Supabase Storage at {remote_path}")
 
