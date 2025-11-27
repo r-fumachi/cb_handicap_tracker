@@ -48,10 +48,10 @@ if event_summary:
         else:
             record = event_summary
         if "data" in st.session_state and len(st.session_state.data) > 0:
-            st.write(f"Latest Event Summary:\nHANDICAP BET OFF = {event_summary["status"]}", record)
+            st.write(f"Latest Event Summary:\nHANDICAP BET OFF = {event_summary['status']}", record)
             plot_live_graph(st.session_state.initial_spread, st.empty())
         else:
-            st.write(f"Latest Event Summary:\nHANDICAP BET OFF = {event_summary["status"]}", record)
+            st.write(f"Latest Event Summary:\nHANDICAP BET OFF = {event_summary['status']}", record)
             st.warning("No valid data yet to plot")
     else:
         update_session_data(event_summary)

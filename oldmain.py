@@ -58,12 +58,12 @@ def selectormain():
         else:
             record = event_summary
         if "data" in st.session_state and len(st.session_state.data) > 0:
-            st.write(f"Latest Event Summary:\nHANDICAP BET OFF = {event_summary["status"]}", record)
+            st.write(f"Latest Event Summary:\nHANDICAP BET OFF = {event_summary['status']}", record)
             if "graph_placeholder" not in st.session_state:
                 st.session_state.graph_placeholder = st.empty()
             plot_live_graph(initial_spread)
         else:
-            st.write(f"Latest Event Summary:\nHANDICAP BET OFF = {event_summary["status"]}", record)
+            st.write(f"Latest Event Summary:\nHANDICAP BET OFF = {event_summary['status']}", record)
             st.warning("No valid data yet to plot")
     else:
         update_session_data(event_summary)
