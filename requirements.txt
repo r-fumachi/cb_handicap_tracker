@@ -6,3 +6,4 @@ plotly==5.9.0
 requests==2.32.3
 supabase==2.4.0
 httpx==0.24.1
+httpcore==0.16.3
