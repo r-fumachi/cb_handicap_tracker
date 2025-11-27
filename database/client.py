@@ -1,11 +1,11 @@
 import streamlit as st
 import requests
-from postgrest import PostgrestClient
+from postgrest import SyncPostgrestClient
 
 SUPABASE_URL = st.secrets["SUPABASE_URL"]
 SUPABASE_KEY = st.secrets["SUPABASE_KEY"]
 
-db = PostgrestClient(
+db = SyncPostgrestClient(
     f"{SUPABASE_URL}/rest/v1",
     headers={
         "apikey": SUPABASE_KEY,
