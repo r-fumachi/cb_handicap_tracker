@@ -43,11 +43,7 @@ def update_session_data(event_summary):
     # Convert stored string to datetime
     last_time = None
     if st.session_state.last_update_time:
-        # Supabase created_at is ISO 8601 string, same as our manual isoformat()
-        last_time = datetime.fromisoformat(
-            st.session_state.last_update_time.replace("Z", "+00:00")
-        )
-
+        last_time = datetime.fromisoformat(st.session_state.last_update_time)
     # 3. Only add new point every 30s
     if last_time and current_time - last_time < timedelta(seconds=30):
         return  # too soon, skip
@@ -71,7 +67,7 @@ def update_session_data(event_summary):
         created_at = resp.data[0].get("created_at")
         st.session_state.last_update_time = created_at
     else:
-        st.session_state.last_update_time = current_time.isoformat()
+        st.session_state.last_update_time = current_time.replace(microsecond=0).isoformat()
 
 def plot_live_graph(original_spread, gplaceholder):
     if "data" not in st.session_state or len(st.session_state.data) < 1:
