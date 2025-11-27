@@ -1,10 +1,24 @@
 import streamlit as st
-from supabase import create_client
+from postgrest import PostgrestClient
+from storage3 import StorageClient
+from gotrue import SyncGoTrueClient
 
-# Initialize Supabase
-supabaseclient = create_client(
-    st.secrets["SUPABASE_URL"],
-    st.secrets["SUPABASE_KEY"]
+SUPABASE_URL = st.secrets["SUPABASE_URL"]
+SUPABASE_KEY = st.secrets["SUPABASE_KEY"]
+
+db = PostgrestClient(
+    f"{SUPABASE_URL}/rest/v1",
+    headers={"apikey": SUPABASE_KEY, "Authorization": f"Bearer {SUPABASE_KEY}"}
+)
+
+storage = StorageClient(
+    f"{SUPABASE_URL}/storage/v1",
+    headers={"apikey": SUPABASE_KEY, "Authorization": f"Bearer {SUPABASE_KEY}"}
+)
+
+auth = SyncGoTrueClient(
+    url=f"{SUPABASE_URL}/auth/v1",
+    headers={"apikey": SUPABASE_KEY}
 )
 
 def init_session_data_from_db(event_id: int):
@@ -12,7 +26,7 @@ def init_session_data_from_db(event_id: int):
         return
 
     resp = (
-        supabase
+        db
         .table("game_records")
         .select("*")
         .eq("event_id", event_id)

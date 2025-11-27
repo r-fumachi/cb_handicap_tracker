@@ -6,7 +6,7 @@ from os import path, getcwd
 from commons import parse_time_to_minutes, CURRENT_TIME
 from cloudbet.search import searchSaveGameData
 from utils.local_store import save_state_json, delete_state_json, LOCAL_STATE_FILENAME
-from database.client import supabaseclient as dbclient, init_session_data_from_db
+from database.client import supabaseclient as init_session_data_from_db, storage, db
 
 # recordspath = path.join(getcwd(),path.join('cbData','gameRecords'))
 
@@ -20,7 +20,7 @@ def update_session_data(event_summary):
     # Read and write data to csv in a Supabase bucket file
     # if "data" not in st.session_state:
     #     try:
-    #         db_res = dbclient.storage.from_(db_bucket_name).download(remote_path)
+    #         db_res = storage.from_(db_bucket_name).download(remote_path)
     #         existing_csv = db_res.decode("utf-8")
     #         st.session_state.data = pd.read_csv(StringIO(existing_csv)).to_dict("records")
 
@@ -64,7 +64,7 @@ def update_session_data(event_summary):
     }
 
     st.session_state.data.append(record)
-    resp = dbclient.table("game_records").insert(record).execute()
+    resp = db.table("game_records").insert(record).execute()
 
     # 6. Update last_update_time from DB or from now
     if resp.data:
@@ -198,7 +198,7 @@ def time_game_selector():
 def export_event_csv(event_id, bucket_name="cbData", folder_name="gameRecords"):
     # 1. Fetch all DB rows for this event
     response = (
-        dbclient.table("game_records")
+        db.table("game_records")
         .select("*")
         .eq("event_id", event_id)
         .order("created_at", desc=False)
@@ -223,12 +223,14 @@ def export_event_csv(event_id, bucket_name="cbData", folder_name="gameRecords"):
     remote_path = f"{folder_name}/{filename}"
 
     # 5. Upload CSV to Supabase Storage (overwrites existing)
-    dbclient.storage.from_(bucket_name).upload(
+    storage.from_(bucket_name).upload(
         path=remote_path,
         file=csv_bytes,
         file_options={"content-type": "text/csv"},
         upsert=True
     )
+
+
 
     st.success(f"CSV saved to Supabase Storage at {remote_path}")
 

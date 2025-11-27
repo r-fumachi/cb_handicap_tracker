@@ -1,10 +1,19 @@
+# --- Core App Dependencies ---
 streamlit==1.51.0
 streamlit-autorefresh==1.0.1
 pandas==2.2.2
 numpy==1.26.4
 plotly==5.9.0
 requests==2.32.3
-supabase==2.4.0
+
+# --- Supported Supabase Modular SDK ---
+postgrest==0.16.11
+storage3==0.7.7
+supabase_auth==0.3.6     # REPLACES deprecated gotrue
+supafunc==0.3.3
+realtime==1.0.6          # only if you want realtime features
+
+# --- HTTP dependency versions compatible with Supabase modular SDK ---
 httpx==0.24.1
 httpcore==0.16.3
 h11==0.14.0
