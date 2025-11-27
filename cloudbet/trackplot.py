@@ -58,7 +58,7 @@ def update_session_data(event_summary):
         "spread": float(event_summary["spread"]),
         "price": float(event_summary["price"]),
         "status": event_summary["status"],
-        "marketUrl": event_summary["marketUrl"],
+        "marketurl": event_summary["marketUrl"],
         "time_since_start": parse_time_to_minutes(event_summary["time_since_start"]),
         "homeoraway": st.session_state.homeOrAway,
     }
@@ -184,7 +184,7 @@ def time_game_selector():
         st.session_state.tracking_active = True
 
         tracking_keys = [
-            "event_id", "event_name", "homeOrAway",
+            "event_id", "event_name", "homeoraway",
             "initial_spread", "selection_done", "tracking_active", "init_done"
         ]
         payload = {key: st.session_state.get(key) for key in tracking_keys}
