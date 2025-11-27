@@ -60,7 +60,7 @@ def update_session_data(event_summary):
         "status": event_summary["status"],
         "marketUrl": event_summary["marketUrl"],
         "time_since_start": parse_time_to_minutes(event_summary["time_since_start"]),
-        "homeOrAway": st.session_state.homeOrAway,
+        "homeoraway": st.session_state.homeOrAway,
     }
 
     st.session_state.data.append(record)
