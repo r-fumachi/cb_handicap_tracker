@@ -1,6 +1,6 @@
 import streamlit as st
 from postgrest import PostgrestClient
-from storage3 import StorageClient
+from storage3.client import Client as StorageClient
 from gotrue import SyncGoTrueClient
 
 SUPABASE_URL = st.secrets["SUPABASE_URL"]
@@ -13,7 +13,10 @@ db = PostgrestClient(
 
 storage = StorageClient(
     f"{SUPABASE_URL}/storage/v1",
-    headers={"apikey": SUPABASE_KEY, "Authorization": f"Bearer {SUPABASE_KEY}"}
+    headers={
+        "apikey": SUPABASE_KEY,
+        "Authorization": f"Bearer {SUPABASE_KEY}"
+    }
 )
 
 auth = SyncGoTrueClient(
