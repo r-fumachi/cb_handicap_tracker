@@ -6,50 +6,72 @@ from os import path, getcwd
 from commons import parse_time_to_minutes, CURRENT_TIME
 from cloudbet.search import searchSaveGameData
 from utils.local_store import save_state_json, delete_state_json, LOCAL_STATE_FILENAME
+from database.client import supabaseclient as dbclient, init_session_data_from_db
 
-recordspath = path.join(getcwd(),path.join('cbData','gameRecords'))
+# recordspath = path.join(getcwd(),path.join('cbData','gameRecords'))
 
 def update_session_data(event_summary):
-    csv_file = event_summary["event_name"].replace(" ","") + str(event_summary["event_id"]) + ".csv"
-    csv_path = path.join(recordspath, csv_file)
-    if "data" not in st.session_state:
-        if path.exists(csv_path):
-            st.session_state.data = pd.read_csv(csv_path).to_dict('records')
-        else:
-            st.session_state.data = []
+    event_id = event_summary["event_id"]
+    init_session_data_from_db(event_id)
+
+    # csv_file = event_summary["event_name"].replace(" ","") + str(event_summary["event_id"]) + ".csv"
+    # csv_path = path.join(recordspath, csv_file)
+    # remote_path = db_folder_name + csv_file
+    # Read and write data to csv in a Supabase bucket file
+    # if "data" not in st.session_state:
+    #     try:
+    #         db_res = dbclient.storage.from_(db_bucket_name).download(remote_path)
+    #         existing_csv = db_res.decode("utf-8")
+    #         st.session_state.data = pd.read_csv(StringIO(existing_csv)).to_dict("records")
+
+    #     except Exception:
+    #         st.session_state.data = []
+
+    # if "data" not in st.session_state:
+    #     if path.exists(csv_path):
+    #         st.session_state.data = pd.read_csv(csv_path).to_dict('records')
+    #     else:
+    #         st.session_state.data = []
+
+
+    # 2. Ensure last_update_time exists
     if "last_update_time" not in st.session_state:
         st.session_state.last_update_time = None
 
     current_time = datetime.now(timezone.utc)
 
     # Convert stored string to datetime
+    last_time = None
     if st.session_state.last_update_time:
-        last_time = datetime.fromisoformat(st.session_state.last_update_time)
-    else:
-        last_time = None
-
-    # Add new point only after 30 seconds
-    if (last_time is None or current_time - last_time >= timedelta(seconds=30)):
-
-        record = {
-            "event_id": event_summary["event_id"],
-            "event_name": event_summary["event_name"],
-            "spread": float(event_summary["spread"]),
-            "price": float(event_summary["price"]),
-            "status": event_summary["status"],
-            "marketUrl": event_summary["marketUrl"],
-            "time_since_start": parse_time_to_minutes(event_summary["time_since_start"]),
-        }
-
-        st.session_state.data.append(record)
-        st.session_state.last_update_time = current_time.isoformat()
-        df = pd.DataFrame([record])
-        df.to_csv(
-            csv_path,
-            mode='a',
-            index=False,
-            header=not path.exists(csv_path)
+        # Supabase created_at is ISO 8601 string, same as our manual isoformat()
+        last_time = datetime.fromisoformat(
+            st.session_state.last_update_time.replace("Z", "+00:00")
         )
+
+    # 3. Only add new point every 30s
+    if last_time and current_time - last_time < timedelta(seconds=30):
+        return  # too soon, skip
+
+    record = {
+        "event_id": event_summary["event_id"],
+        "event_name": event_summary["event_name"],
+        "spread": float(event_summary["spread"]),
+        "price": float(event_summary["price"]),
+        "status": event_summary["status"],
+        "marketUrl": event_summary["marketUrl"],
+        "time_since_start": parse_time_to_minutes(event_summary["time_since_start"]),
+        "homeOrAway": st.session_state.homeOrAway,
+    }
+
+    st.session_state.data.append(record)
+    resp = dbclient.table("game_records").insert(record).execute()
+
+    # 6. Update last_update_time from DB or from now
+    if resp.data:
+        created_at = resp.data[0].get("created_at")
+        st.session_state.last_update_time = created_at
+    else:
+        st.session_state.last_update_time = current_time.isoformat()
 
 def plot_live_graph(original_spread, gplaceholder):
     if "data" not in st.session_state or len(st.session_state.data) < 1:
@@ -172,3 +194,48 @@ def time_game_selector():
         st.session_state.redirect_to_live = True
 
         st.rerun()
+
+def export_event_csv(event_id, bucket_name="cbData", folder_name="gameRecords"):
+    # 1. Fetch all DB rows for this event
+    response = (
+        dbclient.table("game_records")
+        .select("*")
+        .eq("event_id", event_id)
+        .order("created_at", desc=False)
+        .execute()
+    )
+
+    rows = response.data or []
+
+    if not rows:
+        st.warning("No data for this event.")
+        return
+
+    # 2. Convert to DataFrame
+    df = pd.DataFrame(rows)
+
+    # 3. Create CSV bytes
+    csv_bytes = df.to_csv(index=False).encode("utf-8")
+
+    # 4. Setup filename + remote path
+    event_name_clean = df["event_name"].iloc[0].replace(" ", "")
+    filename = f"{event_name_clean}_{event_id}.csv"
+    remote_path = f"{folder_name}/{filename}"
+
+    # 5. Upload CSV to Supabase Storage (overwrites existing)
+    dbclient.storage.from_(bucket_name).upload(
+        path=remote_path,
+        file=csv_bytes,
+        file_options={"content-type": "text/csv"},
+        upsert=True
+    )
+
+    st.success(f"CSV saved to Supabase Storage at {remote_path}")
+
+    # 6. Provide download button for user
+    st.download_button(
+        label="Download CSV",
+        data=csv_bytes,
+        file_name=filename,
+        mime="text/csv"
+    )

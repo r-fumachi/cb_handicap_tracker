@@ -44,6 +44,7 @@ if event_summary:
                 "status": event_summary["status"],
                 "marketUrl": event_summary["marketUrl"],
                 "time_since_start": parse_time_to_minutes(event_summary["time_since_start"]),
+                "homeOrAway": st.session_state.homeOrAway,
             }
         else:
             record = event_summary
