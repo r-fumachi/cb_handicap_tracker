@@ -60,8 +60,15 @@ def update_session_data(event_summary):
     }
 
     st.session_state.data.append(record)
-    resp = db.table("game_records").insert(record).execute()
-
+    resp = (
+        db.table("game_records")
+        .upsert(
+            record,
+            on_conflict="event_id",
+            ignore_update=["created_at"]  # 🛡️ PROTECT created_at
+        )
+        .execute()
+    )
     # 6. Update last_update_time from DB or from now
     if resp.data:
         created_at = resp.data[0].get("created_at")
