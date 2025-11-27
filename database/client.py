@@ -1,6 +1,6 @@
 import streamlit as st
 from postgrest import PostgrestClient
-from storage3 import StorageAPI
+from storage3 import StorageClient
 from supabase_auth import SupabaseAuth
 from typing import List, Dict, Any
 
@@ -39,7 +39,7 @@ db = PostgrestClient(
 # ------------------------------------------------------------------------------
 # Storage
 # ------------------------------------------------------------------------------
-storage = StorageAPI(
+storage = StorageClient(
     f"{SUPABASE_URL}/storage/v1",
     headers={
         "apikey": SUPABASE_KEY,
