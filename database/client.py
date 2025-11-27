@@ -1,28 +1,52 @@
 import streamlit as st
 from postgrest import PostgrestClient
-from storage3.client import Client as StorageClient
-from gotrue import SyncGoTrueClient
+from storage3 import StorageAPI
+from supabase_auth import SupabaseAuth
+from typing import List, Dict, Any
 
+
+# ------------------------------------------------------------------------------
+# Load secrets
+# ------------------------------------------------------------------------------
 SUPABASE_URL = st.secrets["SUPABASE_URL"]
 SUPABASE_KEY = st.secrets["SUPABASE_KEY"]
 
-db = PostgrestClient(
-    f"{SUPABASE_URL}/rest/v1",
-    headers={"apikey": SUPABASE_KEY, "Authorization": f"Bearer {SUPABASE_KEY}"}
-)
 
-storage = StorageClient(
-    f"{SUPABASE_URL}/storage/v1",
+# ------------------------------------------------------------------------------
+# Auth client (optional, but recommended)
+# ------------------------------------------------------------------------------
+auth = SupabaseAuth(
+    url=f"{SUPABASE_URL}/auth/v1",
     headers={
         "apikey": SUPABASE_KEY,
-        "Authorization": f"Bearer {SUPABASE_KEY}"
+        "Authorization": f"Bearer {SUPABASE_KEY}",
     }
 )
 
-auth = SyncGoTrueClient(
-    url=f"{SUPABASE_URL}/auth/v1",
-    headers={"apikey": SUPABASE_KEY}
+
+# ------------------------------------------------------------------------------
+# Database (PostgREST)
+# ------------------------------------------------------------------------------
+db = PostgrestClient(
+    f"{SUPABASE_URL}/rest/v1",
+    headers={
+        "apikey": SUPABASE_KEY,
+        "Authorization": f"Bearer {SUPABASE_KEY}",
+    },
 )
+
+
+# ------------------------------------------------------------------------------
+# Storage
+# ------------------------------------------------------------------------------
+storage = StorageAPI(
+    f"{SUPABASE_URL}/storage/v1",
+    headers={
+        "apikey": SUPABASE_KEY,
+        "Authorization": f"Bearer {SUPABASE_KEY}",
+    },
+)
+
 
 def init_session_data_from_db(event_id: int):
     if "data" in st.session_state:
