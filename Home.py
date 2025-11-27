@@ -15,7 +15,7 @@ if "init_done" not in st.session_state:
 # If tracking already active, show "Go to Live Tracker" button
 if st.session_state.get("tracking_active", False):
     if st.button("Go to Live Tracker"):
-        st.switch_page("pages/Live_Tracker.py")
+        st.switch_page("pages/Live_tracker.py")
 
 if "sport_names" not in st.session_state:
     st.session_state.sport_names = get_sportnames_json()
@@ -32,4 +32,4 @@ time_game_selector()
 # When selection_done=True, redirect to Live Tracking page
 if st.session_state.get("redirect_to_live", False):
     st.session_state.redirect_to_live = False  # turn it off immediately
-    st.switch_page("pages/Live_Tracker.py")
+    st.switch_page("pages/Live_tracker.py")
