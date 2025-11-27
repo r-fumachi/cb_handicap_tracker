@@ -1,19 +1,9 @@
 import streamlit as st
 import requests
 from postgrest import PostgrestClient
-from supabase_auth import SupabaseAuth
 
 SUPABASE_URL = st.secrets["SUPABASE_URL"]
 SUPABASE_KEY = st.secrets["SUPABASE_KEY"]
-
-
-auth = SupabaseAuth(
-    url=f"{SUPABASE_URL}/auth/v1",
-    headers={
-        "apikey": SUPABASE_KEY,
-        "Authorization": f"Bearer {SUPABASE_KEY}",
-    }
-)
 
 db = PostgrestClient(
     f"{SUPABASE_URL}/rest/v1",
