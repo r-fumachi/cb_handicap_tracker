@@ -44,12 +44,14 @@ def download_from_storage(bucket: str, path: str) -> bytes | None:
 
 def get_user_state() -> Dict:
     uid = get_user_id()
+    logger.debug(uid)
     res = (
         db
         .table("user_tracking_state")
         .select("state_json")
         .eq("user_id", uid)
         .maybe_single()
+        .execute()
         )
     logger.info(res)
     if res and res.get("state_json"):
