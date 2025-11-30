@@ -34,14 +34,14 @@ logger = logging.getLogger(__name__)
 
 def get_user_id():
     return st_javascript("""
-    (() => {
+    async function() {
         let uid = localStorage.getItem('user_id');
         if (!uid) {
             uid = crypto.randomUUID();
             localStorage.setItem('user_id', uid);
         }
         return uid;
-    })()
+    }
     """)
 
 

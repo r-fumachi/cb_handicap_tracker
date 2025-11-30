@@ -56,7 +56,7 @@ def get_user_state() -> Dict:
     logger.info(res)
     if res.data.get("state_json",""):
         logger.info("Loaded user session state")
-        logger.info(res["state_json"])
+        logger.info(res.data.get("state_json"))
         return res.data.get("state_json")
     else:
         return {}
