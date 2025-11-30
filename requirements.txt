@@ -1,7 +1,7 @@
 # Streamlit
 streamlit==1.51.0
 streamlit-autorefresh==1.0.1
-streamlit_js_eval
+streamlit-javascript
 
 # Data
 pandas==2.2.2
