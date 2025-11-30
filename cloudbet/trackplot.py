@@ -5,7 +5,7 @@ from dateutil.parser import isoparse
 from plotly import graph_objects as go
 from commons import parse_time_to_minutes, CURRENT_TIME
 from cloudbet.search import searchSaveGameData
-from database.client import init_session_data_from_db, upload_to_storage, db
+from database.client import init_session_data_from_db, upload_to_storage, db, save_user_state
 
 def update_session_data(event_summary):
     event_id = event_summary["event_id"]
@@ -152,6 +152,13 @@ def time_game_selector():
         st.session_state.initial_spread = initial_spread
         st.session_state.selection_done = True
         st.session_state.tracking_active = True
+
+        tracking_keys = [
+            "event_id", "event_name", "homeOrAway",
+            "initial_spread", "selection_done", "tracking_active", "init_done"
+        ]
+        payload = {key: st.session_state.get(key) for key in tracking_keys}
+        save_user_state(payload)
 
         st.session_state.redirect_to_live = True
 

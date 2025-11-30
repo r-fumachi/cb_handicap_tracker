@@ -1,6 +1,8 @@
 import streamlit as st
 import requests
 from postgrest import SyncPostgrestClient
+from commons import get_user_id, logger
+from typing import Dict
 
 SUPABASE_URL = st.secrets["SUPABASE_URL"]
 SUPABASE_KEY = st.secrets["SUPABASE_KEY"]
@@ -39,6 +41,37 @@ def download_from_storage(bucket: str, path: str) -> bytes | None:
     if res.status_code == 200:
         return res.content
     return None
+
+def get_user_state() -> Dict:
+    uid = get_user_id()
+    res = (
+        db
+        .table("user_tracking_state")
+        .select("state_json")
+        .eq("user_id", uid)
+        .maybe_single()
+        )
+    
+    if res and res.get("state_json"):
+        logger.info("Loaded user session state")
+        logger.info(res["state_json"])
+        return res["state_json"]
+    else:
+        return {}
+    
+def save_user_state(payload):
+    uid = get_user_id()
+    res = (
+        db
+        .table("user_tracking_state")
+        .upsert({
+            "user_id": uid,
+            "state_json": payload})
+        .execute()
+        )
+    logger.info("Saved user session state")
+    logger.info(res)
+    return res
 
 def init_session_data_from_db(event_id: int):
     if "data" in st.session_state:
