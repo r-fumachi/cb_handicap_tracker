@@ -5,7 +5,7 @@ from dateutil.parser import isoparse
 from plotly import graph_objects as go
 from commons import parse_time_to_minutes, CURRENT_TIME
 from cloudbet.search import searchSaveGameData
-from database.client import init_session_data_from_db, upload_to_storage
+from database.client import init_session_data_from_db, upload_to_storage, db
 
 def update_session_data(event_summary):
     event_id = event_summary["event_id"]
