@@ -34,27 +34,31 @@ logging.basicConfig(
 logger = logging.getLogger(__name__)
 
 def get_user_id():
-# If the UID was already obtained, use it
+    # 1. If we already have the UID -> return it
     if "uid" in st.session_state:
         return st.session_state["uid"]
 
-    # Ask JavaScript to return the UID
-    uid = st_javascript("""
-        (async () => {
-            let id = localStorage.getItem('user_id');
-            if (!id) {
-                id = crypto.randomUUID();
-                localStorage.setItem('user_id', id);
-            }
+    # 2. Run JS to get UID (may return 0 the first time)
+    js_value = st_javascript("""
+        (function() {
+            const id = window.localStorage.getItem('user_id') ?? (
+                () => {
+                    const newId = crypto.randomUUID();
+                    window.localStorage.setItem('user_id', newId);
+                    return newId;
+                }
+            )();
             return id;
         })();
     """)
 
-    # Streamlit will return "0" before JavaScript finishes.
-    # Ignore that value and wait for correct UID.
-    if not uid or uid == 0 or uid == "0":
-        st.stop()  # <-- STOP HERE and wait for next rerun
+    # 3. First run → js_value = 0 → let the script finish normally
+    #    Do NOT stop or rerun here.
+    if js_value in (None, 0, "0"):
+        return None
 
-    # Now JS has returned an actual UID
-    st.session_state["uid"] = uid
-    st.rerun()  # <-- restart app with UID loaded
+    # 4. JS returned valid UID → save it
+    st.session_state["uid"] = js_value
+
+    # 5. Trigger clean rerun
+    st.rerun()
