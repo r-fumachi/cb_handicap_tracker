@@ -154,7 +154,7 @@ def time_game_selector():
         st.session_state.tracking_active = True
 
         tracking_keys = [
-            "event_id", "event_name", "homeOrAway",
+            "event_id", "event_name", "homeoraway",
             "initial_spread", "selection_done", "tracking_active", "init_done"
         ]
         payload = {key: st.session_state.get(key) for key in tracking_keys}
