@@ -35,13 +35,12 @@ logger = logging.getLogger(__name__)
 def get_user_id():
     return st_javascript("""
     (async () => {
-        let uid = localStorage.getItem('user_id');
+        let uid = window.localStorage.getItem('user_id');
         if (!uid) {
-            uid = crypto.randomUUID();
-            localStorage.setItem('user_id', uid);
+        uid = crypto.randomUUID();
+        window.localStorage.setItem('user_id', uid);
         }
         return uid;
-    })()
-""")
-
+        })();
+    """)
 
