@@ -55,7 +55,7 @@ def update_session_data(event_summary):
         "status": event_summary["status"],
         "marketurl": event_summary["marketUrl"],
         "time_since_start": parse_time_to_minutes(event_summary["time_since_start"]),
-        "homeoraway": st.session_state.homeOrAway,
+        "homeoraway": st.session_state.homeoraway,
     }
 
     st.session_state.data.append(record)
@@ -102,7 +102,7 @@ def plot_live_graph(original_spread, gplaceholder):
     ))
 
     fig.update_layout(
-        title=f"Live spread of {st.session_state.event_name} - {st.session_state.homeOrAway.upper()}",
+        title=f"Live spread of {st.session_state.event_name} - {st.session_state.homeoraway.upper()}",
         xaxis_title="Time",
         yaxis_title="Spread",
         template="plotly_white",
@@ -163,7 +163,7 @@ def time_game_selector():
     selected_event_name = st.selectbox("Select Game", list(event_options.keys()))
 
     # --- Home/Away Selection ---
-    homeOrAway = st.radio("Track odds for:", ["home", "away"])
+    homeoraway = st.radio("Track odds for:", ["home", "away"])
 
     # --- Initial Spread ---
     initial_spread = st.number_input("Initial Spread (optional)", value=0.0, format="%.1f")
@@ -173,7 +173,7 @@ def time_game_selector():
         delete_state_json("local_state")
         st.session_state.event_id = event_options[selected_event_name]
         st.session_state.event_name = selected_event_name
-        st.session_state.homeOrAway = homeOrAway
+        st.session_state.homeoraway = homeoraway
         st.session_state.initial_spread = initial_spread
         st.session_state.selection_done = True
         st.session_state.tracking_active = True

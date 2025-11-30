@@ -7,7 +7,7 @@ from commons import get_sportnames_json
 if "init_done" not in st.session_state:
     initialize_app()
     # Initialize shared session_state keys
-    for key in ["event_id", "event_name", "homeOrAway", "initial_spread",
+    for key in ["event_id", "event_name", "homeoraway", "initial_spread",
                 "ts", "tf", "selection_done"]:
         st.session_state.setdefault(key, None)
     st.session_state.init_done = True

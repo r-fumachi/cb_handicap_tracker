@@ -35,13 +35,13 @@ def selectormain():
     # After selection, proceed to tracking
     event_id = st.session_state.event_id
     event_name = st.session_state.event_name
-    homeOrAway = st.session_state.homeOrAway
+    homeoraway = st.session_state.homeoraway
     initial_spread = st.session_state.initial_spread
 
-    st.subheader(f"📊 Live Tracking — {event_name} ({homeOrAway.upper()})")
+    st.subheader(f"📊 Live Tracking — {event_name} ({homeoraway.upper()})")
 
     # fetch & track as before
-    event_summary = fetch_event_data(event_id, event_name, homeOrAway)
+    event_summary = fetch_event_data(event_id, event_name, homeoraway)
     print(event_summary)
 
     if not event_summary["status"] == "SELECTION_ENABLED":

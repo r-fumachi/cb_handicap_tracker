@@ -22,13 +22,13 @@ else:
 if "event_id" in st.session_state:
     st.session_state.last_event_id = st.session_state.event_id
 
-st.subheader(f"📊 Live Tracking — {st.session_state.event_name} ({st.session_state.homeOrAway.upper()})")
+st.subheader(f"📊 Live Tracking — {st.session_state.event_name} ({st.session_state.homeoraway.upper()})")
 
 # Fetch event data
 event_summary = fetch_event_data(
     event_id=st.session_state.event_id,
     event_name=st.session_state.event_name,
-    homeOrAway=st.session_state.homeOrAway
+    homeOrAway=st.session_state.homeoraway
 )
 print(event_summary)
 
@@ -44,7 +44,7 @@ if event_summary:
                 "status": event_summary["status"],
                 "marketurl": event_summary["marketUrl"],
                 "time_since_start": parse_time_to_minutes(event_summary["time_since_start"]),
-                "homeoraway": st.session_state.homeOrAway,
+                "homeoraway": st.session_state.homeoraway,
             }
         else:
             record = event_summary
@@ -74,6 +74,6 @@ with col1:
         st.switch_page("Home.py")
 with col2:
     if st.button("🔁 Restart Tracking"):
-        for key in ["event_id", "event_name", "homeOrAway", "initial_spread", "tracking_active", "selection_done","ts", "tf","init_done"]:
+        for key in ["event_id", "event_name", "homeoraway", "initial_spread", "tracking_active", "selection_done","ts", "tf","init_done"]:
             st.session_state.pop(key, None)
         st.switch_page("Home.py")
