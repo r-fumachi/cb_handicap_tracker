@@ -1,7 +1,7 @@
 # Streamlit
 streamlit==1.51.0
 streamlit-autorefresh==1.0.1
-streamlit-javascript
+streamlit-cookies-manager
 
 # Data
 pandas==2.2.2
