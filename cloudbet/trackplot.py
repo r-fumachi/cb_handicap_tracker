@@ -178,13 +178,13 @@ def time_game_selector():
         st.session_state.selection_done = True
         st.session_state.tracking_active = True
 
-        tracking_keys = [
-            "event_id", "event_name", "homeoraway",
-            "initial_spread", "selection_done", "tracking_active", "init_done"
-        ]
-        payload = {key: st.session_state.get(key) for key in tracking_keys}
-        save_state_json(payload, LOCAL_STATE_FILENAME)
-        print("Saved file")
+        # tracking_keys = [
+        #     "event_id", "event_name", "homeoraway",
+        #     "initial_spread", "selection_done", "tracking_active", "init_done"
+        # ]
+        # payload = {key: st.session_state.get(key) for key in tracking_keys}
+        # save_state_json(payload, LOCAL_STATE_FILENAME)
+        # print("Saved file")
 
         st.session_state.redirect_to_live = True
 
