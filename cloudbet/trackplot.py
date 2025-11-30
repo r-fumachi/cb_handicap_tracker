@@ -1,6 +1,7 @@
 import streamlit as st
 import pandas as pd
 from datetime import datetime, timezone, timedelta
+from dateutil.parser import isoparse
 from plotly import graph_objects as go
 from os import path, getcwd
 from commons import parse_time_to_minutes, CURRENT_TIME
@@ -39,11 +40,9 @@ def update_session_data(event_summary):
         st.session_state.last_update_time = None
 
     current_time = datetime.now(timezone.utc)
-
-    # Convert stored string to datetime
     last_time = None
     if st.session_state.last_update_time:
-        last_time = datetime.fromisoformat(st.session_state.last_update_time)
+        last_time = isoparse(st.session_state.last_update_time)
     # 3. Only add new point every 30s
     if last_time and current_time - last_time < timedelta(seconds=30):
         return  # too soon, skip
@@ -64,6 +63,7 @@ def update_session_data(event_summary):
     # 6. Update last_update_time from DB or from now
     if resp.data:
         created_at = resp.data[0].get("created_at")
+
         st.session_state.last_update_time = created_at
     else:
         st.session_state.last_update_time = current_time.replace(microsecond=0).isoformat()
