@@ -51,7 +51,7 @@ def get_user_state() -> Dict:
         .eq("user_id", uid)
         .maybe_single()
         )
-    
+    logger.info(res)
     if res and res.get("state_json"):
         logger.info("Loaded user session state")
         logger.info(res["state_json"])
