@@ -1,4 +1,5 @@
 import logging
+import streamlit as st
 from json import dump, load
 from os import path, getcwd
 from time import time as current_time
@@ -33,14 +34,21 @@ logging.basicConfig(
 logger = logging.getLogger(__name__)
 
 def get_user_id():
-    return st_javascript("""
-    (async () => {
-        let uid = window.localStorage.getItem('user_id');
-        if (!uid) {
-        uid = crypto.randomUUID();
-        window.localStorage.setItem('user_id', uid);
-        }
-        return uid;
-        })();
-    """)
+    if "uid" not in st.session_state:
+        uid = st_javascript("""
+            (async () => {
+                let id = window.localStorage.getItem('user_id');
+                if (!id) {
+                    id = crypto.randomUUID();
+                    window.localStorage.setItem('user_id', id);
+                }
+                return id;
+            })()
+        """)
+
+        if uid and uid != 0:
+            st.session_state.uid = uid
+            logger.info(uid)
+            st.rerun()
+    return uid
 
