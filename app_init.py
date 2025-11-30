@@ -5,4 +5,4 @@ def initialize_app():
     # Always remove the old flag file when app starts
     if path.exists(LOCAL_STATE_PATH):
         remove(LOCAL_STATE_PATH)
-        print("removed it")
+        print("removed local file")

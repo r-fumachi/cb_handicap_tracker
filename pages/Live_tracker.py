@@ -1,11 +1,11 @@
 import streamlit as st
 from streamlit_autorefresh import st_autorefresh
 from utils.utils import fetch_event_data
-from commons import parse_time_to_minutes
+from commons import parse_time_to_minutes, logger
 from cloudbet.trackplot import update_session_data, plot_live_graph
 from database.client import init_session_data_from_db
 
-if not st.session_state.selection_done:
+if "selection_done" not in st.session_state or not st.session_state["selection_done"]:
     st.warning("⚠️ No active tracking session. Please select a game first.")
     if st.button("⬅️ Go to Game Selection"):
         st.switch_page("Home.py")
@@ -19,7 +19,8 @@ event_summary = fetch_event_data(
     event_name=st.session_state.event_name,
     homeOrAway=st.session_state.homeoraway
 )
-print(event_summary)
+
+logger.debug(event_summary)
 
 init_session_data_from_db(st.session_state.event_id)
 

@@ -1,3 +1,4 @@
+import logging
 from json import dump, load
 from os import path, getcwd
 from time import time as current_time
@@ -23,3 +24,9 @@ def get_sportnames_json():
     with open(filepath) as f:
         sportnames = load(f)
     return sportnames
+
+logging.basicConfig(
+    format="%(asctime)s - %(levelname)s - %(message)s",
+    level=logging.INFO
+)
+logger = logging.getLogger(__name__)
