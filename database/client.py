@@ -44,7 +44,7 @@ def download_from_storage(bucket: str, path: str) -> bytes | None:
 
 def get_user_state() -> Dict:
     uid = get_user_id()
-    logger.debug(uid)
+    logger.info(uid)
     res = (
         db
         .table("user_tracking_state")
@@ -54,10 +54,10 @@ def get_user_state() -> Dict:
         .execute()
         )
     logger.info(res)
-    if res and res.get("state_json"):
+    if res.data.get("state_json",""):
         logger.info("Loaded user session state")
         logger.info(res["state_json"])
-        return res["state_json"]
+        return res.data.get("state_json")
     else:
         return {}
     
