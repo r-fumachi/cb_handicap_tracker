@@ -3,24 +3,13 @@ from streamlit_autorefresh import st_autorefresh
 from utils.utils import fetch_event_data
 from commons import parse_time_to_minutes
 from cloudbet.trackplot import update_session_data, plot_live_graph
-from utils.local_store import LOCAL_STATE_PATH
-from os import path
-from json import load
+from database.client import init_session_data_from_db
 
-# Load tracking state from file if exists
-if path.exists(LOCAL_STATE_PATH):
-    with open(LOCAL_STATE_PATH, "r") as f:
-        tracking_data = load(f)
-        st.session_state.update(tracking_data)
-else:
+if not st.session_state.selection_done:
     st.warning("⚠️ No active tracking session. Please select a game first.")
     if st.button("⬅️ Go to Game Selection"):
         st.switch_page("Home.py")
     st.stop()
-
-# Always update last_event_id to current
-if "event_id" in st.session_state:
-    st.session_state.last_event_id = st.session_state.event_id
 
 st.subheader(f"📊 Live Tracking — {st.session_state.event_name} ({st.session_state.homeoraway.upper()})")
 
@@ -31,6 +20,8 @@ event_summary = fetch_event_data(
     homeOrAway=st.session_state.homeoraway
 )
 print(event_summary)
+
+init_session_data_from_db(st.session_state.event_id)
 
 # Preserve graph even if selection is disabled
 if event_summary:

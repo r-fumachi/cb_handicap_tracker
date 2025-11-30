@@ -3,37 +3,13 @@ import pandas as pd
 from datetime import datetime, timezone, timedelta
 from dateutil.parser import isoparse
 from plotly import graph_objects as go
-from os import path, getcwd
 from commons import parse_time_to_minutes, CURRENT_TIME
 from cloudbet.search import searchSaveGameData
-from utils.local_store import save_state_json, delete_state_json, LOCAL_STATE_FILENAME
-from database.client import init_session_data_from_db, upload_to_storage, db
-
-# recordspath = path.join(getcwd(),path.join('cbData','gameRecords'))
+from database.client import init_session_data_from_db, upload_to_storage
 
 def update_session_data(event_summary):
     event_id = event_summary["event_id"]
     init_session_data_from_db(event_id)
-
-    # csv_file = event_summary["event_name"].replace(" ","") + str(event_summary["event_id"]) + ".csv"
-    # csv_path = path.join(recordspath, csv_file)
-    # remote_path = db_folder_name + csv_file
-    # Read and write data to csv in a Supabase bucket file
-    # if "data" not in st.session_state:
-    #     try:
-    #         db_res = storage.from_(db_bucket_name).download(remote_path)
-    #         existing_csv = db_res.decode("utf-8")
-    #         st.session_state.data = pd.read_csv(StringIO(existing_csv)).to_dict("records")
-
-    #     except Exception:
-    #         st.session_state.data = []
-
-    # if "data" not in st.session_state:
-    #     if path.exists(csv_path):
-    #         st.session_state.data = pd.read_csv(csv_path).to_dict('records')
-    #     else:
-    #         st.session_state.data = []
-
 
     # 2. Ensure last_update_time exists
     if "last_update_time" not in st.session_state:
@@ -69,7 +45,7 @@ def update_session_data(event_summary):
         st.session_state.last_update_time = current_time.replace(microsecond=0).isoformat()
 
 def plot_live_graph(original_spread, gplaceholder):
-    if "data" not in st.session_state or len(st.session_state.data) < 1:
+    if len(st.session_state.data) < 1:
         st.warning("Waiting for first data point...")
         return
 
@@ -170,21 +146,12 @@ def time_game_selector():
 
     # --- Start Tracking (Lock Selection) ---
     if st.button("🚀 Start Tracking"):
-        delete_state_json("local_state")
         st.session_state.event_id = event_options[selected_event_name]
         st.session_state.event_name = selected_event_name
         st.session_state.homeoraway = homeoraway
         st.session_state.initial_spread = initial_spread
         st.session_state.selection_done = True
         st.session_state.tracking_active = True
-
-        # tracking_keys = [
-        #     "event_id", "event_name", "homeoraway",
-        #     "initial_spread", "selection_done", "tracking_active", "init_done"
-        # ]
-        # payload = {key: st.session_state.get(key) for key in tracking_keys}
-        # save_state_json(payload, LOCAL_STATE_FILENAME)
-        # print("Saved file")
 
         st.session_state.redirect_to_live = True
 
