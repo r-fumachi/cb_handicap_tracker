@@ -3,7 +3,7 @@ from json import dump, load
 from os import path, getcwd
 from time import time as current_time
 from datetime import timedelta
-from streamlit_js_eval.js_eval import get_js_eval
+from streamlit_js_eval import get_js_eval
 
 dataPath = path.join(getcwd(),'cbData')
 CURRENT_TIME: int = int(current_time())
