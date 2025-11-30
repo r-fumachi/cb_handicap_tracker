@@ -74,6 +74,6 @@ with col1:
         st.switch_page("Home.py")
 with col2:
     if st.button("🔁 Restart Tracking"):
-        for key in ["event_id", "event_name", "homeOrAway", "initial_spread", "tracking_active", "selection_done"]:
+        for key in ["event_id", "event_name", "homeOrAway", "initial_spread", "tracking_active", "selection_done","ts", "tf","init_done"]:
             st.session_state.pop(key, None)
         st.switch_page("Home.py")
