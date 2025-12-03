@@ -31,5 +31,6 @@ time_game_selector()
 
 # When selection_done=True, redirect to Live Tracking page
 if st.session_state.get("redirect_to_live", False):
+    st.session_state.gplaceholder.empty()
     st.session_state.redirect_to_live = False  # turn it off immediately
     st.switch_page("pages/Live_tracker.py")
