@@ -12,6 +12,8 @@ headers = {
     "X-API-Key": key
 }
 
+rapidapikey = getenv("SPORTSAPI_KEY")
+rapidapiurl = "v1.basketball.api-sports.io"
 
 def cbGet(url: str, params: Optional[Dict] = None, retries: int = 3, delay: int = 5) -> Union[Dict, Any]:
     if params is None:
@@ -93,3 +95,14 @@ def getLines(eventId:str,marketUrl:str):
 
 def getBetHistory():
     return cbGet('v4/bets/history')
+
+def getSportsAPItoken():
+    payload={}
+    headers = {
+    'x-rapidapi-key': rapidapikey,
+    'x-rapidapi-host': rapidapiurl
+    }
+
+    response = requests.request("GET", rapidapiurl, headers=headers, data=payload)
+
+    print(response.text)
