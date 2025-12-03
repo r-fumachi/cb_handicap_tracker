@@ -28,8 +28,6 @@ init_session_data_from_db(st.session_state.event_id)
 
 # Preserve graph even if selection is disabled
 if event_summary:
-    if "gplaceholder" not in st.session_state:
-        st.session_state.gplaceholder = st.empty()
     if not event_summary["status"] == "SELECTION_ENABLED":
         if event_summary["status"] != "Event Over":
             record = {
@@ -46,6 +44,8 @@ if event_summary:
             record = event_summary
         if "data" in st.session_state and len(st.session_state.data) > 0:
             st.write(f"Latest Event Summary:\nHANDICAP BET OFF = {event_summary['status']}", record)
+            if "gplaceholder" not in st.session_state:
+                st.session_state.gplaceholder = st.empty()
             plot_live_graph(st.session_state.initial_spread, st.session_state.gplaceholder)
         else:
             st.write(f"Latest Event Summary:\nHANDICAP BET OFF = {event_summary['status']}", record)
@@ -55,6 +55,8 @@ if event_summary:
 
         if "data" in st.session_state and len(st.session_state.data) > 0:
             st.write("Latest Event Summary:", st.session_state.data[-1])
+            if "gplaceholder" not in st.session_state:
+                st.session_state.gplaceholder = st.empty()
             plot_live_graph(st.session_state.initial_spread, st.session_state.gplaceholder)
         else:
             st.warning("Waiting for first data point...")
