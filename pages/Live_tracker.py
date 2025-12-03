@@ -44,9 +44,7 @@ if event_summary:
             record = event_summary
         if "data" in st.session_state and len(st.session_state.data) > 0:
             st.write(f"Latest Event Summary:\nHANDICAP BET OFF = {event_summary['status']}", record)
-            if "gplaceholder" not in st.session_state:
-                st.session_state.gplaceholder = st.empty()
-            plot_live_graph(st.session_state.initial_spread, st.session_state.gplaceholder)
+            plot_live_graph(st.session_state.initial_spread, st.empty())
         else:
             st.write(f"Latest Event Summary:\nHANDICAP BET OFF = {event_summary['status']}", record)
             st.warning("No valid data yet to plot")
@@ -55,9 +53,7 @@ if event_summary:
 
         if "data" in st.session_state and len(st.session_state.data) > 0:
             st.write("Latest Event Summary:", st.session_state.data[-1])
-            if "gplaceholder" not in st.session_state:
-                st.session_state.gplaceholder = st.empty()
-            plot_live_graph(st.session_state.initial_spread, st.session_state.gplaceholder)
+            plot_live_graph(st.session_state.initial_spread, st.empty())
         else:
             st.warning("Waiting for first data point...")
 
@@ -72,6 +68,6 @@ with col1:
         st.switch_page("Home.py")
 with col2:
     if st.button("🔁 Restart Tracking"):
-        for key in ["gplaceholder","event_id", "event_name", "homeoraway", "initial_spread", "tracking_active", "selection_done","ts", "tf","init_done"]:
+        for key in ["event_id", "event_name", "homeoraway", "initial_spread", "tracking_active", "selection_done","ts", "tf","init_done"]:
             st.session_state.pop(key, None)
         st.switch_page("Home.py")
