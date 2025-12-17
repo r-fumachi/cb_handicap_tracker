@@ -101,8 +101,8 @@ def time_game_selector():
         tf = st.number_input("How many hours ago (To)?", min_value=-100, value=0)
 
     # Convert hours to timestamps
-    st.session_state.ts = current_time() - ts * 3600
-    st.session_state.tf = current_time() - tf * 3600
+    st.session_state.ts = int(current_time()) - ts * 3600
+    st.session_state.tf = int(current_time()) - tf * 3600
 
     # Sport Name
     selected_sport_label = st.selectbox(
