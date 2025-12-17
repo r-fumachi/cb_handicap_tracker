@@ -1,5 +1,6 @@
 import streamlit as st
 import pandas as pd
+from time import current_time
 from datetime import datetime, timezone, timedelta
 from dateutil.parser import isoparse
 from plotly import graph_objects as go
@@ -15,7 +16,7 @@ def update_session_data(event_summary):
     if "last_update_time" not in st.session_state:
         st.session_state.last_update_time = None
 
-    current_time = datetime.now(timezone.utc)
+    dt_current_time = datetime.now(timezone.utc)
     last_time = None
     if st.session_state.last_update_time:
         last_time = isoparse(st.session_state.last_update_time)
@@ -42,7 +43,7 @@ def update_session_data(event_summary):
 
         st.session_state.last_update_time = created_at
     else:
-        st.session_state.last_update_time = current_time.replace(microsecond=0).isoformat()
+        st.session_state.last_update_time = dt_current_time.replace(microsecond=0).isoformat()
 
 def plot_live_graph(original_spread, gplaceholder):
     if len(st.session_state.data) < 1:
@@ -99,7 +100,6 @@ def time_game_selector():
     with col2:
         tf = st.number_input("How many hours ago (To)?", min_value=-100, value=0)
 
-    current_time = datetime.now(timezone.utc)
     # Convert hours to timestamps
     st.session_state.ts = current_time - ts * 3600
     st.session_state.tf = current_time - tf * 3600
