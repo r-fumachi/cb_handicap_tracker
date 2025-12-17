@@ -21,7 +21,7 @@ def update_session_data(event_summary):
     if st.session_state.last_update_time:
         last_time = isoparse(st.session_state.last_update_time)
     # 3. Only add new point every 30s
-    if last_time and current_time() - last_time < timedelta(seconds=30):
+    if last_time and dt_current_time - last_time < timedelta(seconds=30):
         return  # too soon, skip
 
     record = {
