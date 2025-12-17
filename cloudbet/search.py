@@ -3,7 +3,7 @@ from commons import saveData
 from time import time as current_time
 
 
-def searchSaveGameData(sport, eventName, ts=current_time() - 3600, tf=current_time()):
+def searchSaveGameData(sport, eventName, ts=int(current_time() - 3600), tf=int(current_time())):
     eventData, gameData = processSportData(
         sport=sport,
         eventName=eventName,
