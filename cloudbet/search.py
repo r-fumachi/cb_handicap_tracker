@@ -1,7 +1,9 @@
 from cloudbet.process import processSportData
-from commons import saveData, CURRENT_TIME
+from commons import saveData
+from time import time as current_time
 
-def searchSaveGameData(sport, eventName, ts=CURRENT_TIME - 3600, tf=CURRENT_TIME):
+
+def searchSaveGameData(sport, eventName, ts=current_time() - 3600, tf=current_time()):
     eventData, gameData = processSportData(
         sport=sport,
         eventName=eventName,

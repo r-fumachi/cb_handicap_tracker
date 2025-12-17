@@ -3,7 +3,7 @@ import pandas as pd
 from datetime import datetime, timezone, timedelta
 from dateutil.parser import isoparse
 from plotly import graph_objects as go
-from commons import parse_time_to_minutes, CURRENT_TIME
+from commons import parse_time_to_minutes
 from cloudbet.search import searchSaveGameData
 from database.client import init_session_data_from_db, upload_to_storage, db, save_user_state
 
@@ -99,9 +99,10 @@ def time_game_selector():
     with col2:
         tf = st.number_input("How many hours ago (To)?", min_value=-100, value=0)
 
+    current_time = datetime.now(timezone.utc)
     # Convert hours to timestamps
-    st.session_state.ts = CURRENT_TIME - ts * 3600
-    st.session_state.tf = CURRENT_TIME - tf * 3600
+    st.session_state.ts = current_time - ts * 3600
+    st.session_state.tf = current_time - tf * 3600
 
     # Sport Name
     selected_sport_label = st.selectbox(

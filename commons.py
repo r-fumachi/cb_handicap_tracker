@@ -4,11 +4,9 @@ from streamlit_cookies_manager import EncryptedCookieManager
 import uuid
 from json import dump, load
 from os import path, getcwd
-from time import time as current_time
 from datetime import timedelta
 
 dataPath = path.join(getcwd(),'cbData')
-CURRENT_TIME: int = int(current_time())
 COOKIE_KEY = st.secrets["COOKIE_KEY"]
 cookies = EncryptedCookieManager(prefix="cb_handicap", password=COOKIE_KEY)
 
