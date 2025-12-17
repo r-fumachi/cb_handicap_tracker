@@ -1,6 +1,6 @@
 import streamlit as st
 import pandas as pd
-from time import current_time
+from time import time as current_time
 from datetime import datetime, timezone, timedelta
 from dateutil.parser import isoparse
 from plotly import graph_objects as go
