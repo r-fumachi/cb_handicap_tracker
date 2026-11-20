@@ -245,9 +245,13 @@ for index, tracker in enumerate(st.session_state.multi_trackers):
                     st.caption(f"Handicap market unavailable: {event_summary['status']}")
                     if event_summary["status"] != "Event Over":
                         st.write({
+                            "event_id": event_summary["event_id"],
+                            "event_name": event_summary["event_name"],
                             "spread": float(event_summary["spread"]),
                             "price": float(event_summary["price"]),
                             "status": event_summary["status"],
+                            "marketurl": event_summary["marketUrl"],
+                            "homeoraway": tracker["homeoraway"],
                             "time_since_start": parse_time_to_minutes(
                                 event_summary["time_since_start"]
                             ),
