@@ -244,6 +244,7 @@ for index, tracker in enumerate(st.session_state.multi_trackers):
                 else:
                     st.caption(f"Handicap market unavailable: {event_summary['status']}")
                     if event_summary["status"] != "Event Over":
+                        update_tracker_data(tracker, event_summary)
                         st.write({
                             "event_id": event_summary["event_id"],
                             "event_name": event_summary["event_name"],
