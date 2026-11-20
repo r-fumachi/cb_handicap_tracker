@@ -7,6 +7,7 @@ from plotly import graph_objects as go
 from commons import parse_time_to_minutes
 from cloudbet.search import searchSaveGameData
 from database.client import init_session_data_from_db, upload_to_storage, db, save_user_state
+from database.client import get_event_records
 
 def update_session_data(event_summary):
     event_id = event_summary["event_id"]
@@ -45,12 +46,56 @@ def update_session_data(event_summary):
     else:
         st.session_state.last_update_time = dt_current_time.replace(microsecond=0).isoformat()
 
-def plot_live_graph(original_spread, gplaceholder):
-    if len(st.session_state.data) < 1:
+def load_tracker_history(tracker):
+    tracker["data"] = get_event_records(tracker["event_id"])
+    tracker["last_update_time"] = (
+        tracker["data"][-1].get("created_at") if tracker["data"] else None
+    )
+    tracker["history_loaded"] = True
+
+
+def update_tracker_data(tracker, event_summary):
+    current_time = datetime.now(timezone.utc)
+    last_update_time = tracker.get("last_update_time")
+    if last_update_time and current_time - isoparse(last_update_time) < timedelta(seconds=30):
+        return
+
+    record = {
+        "event_id": event_summary["event_id"],
+        "event_name": event_summary["event_name"],
+        "spread": float(event_summary["spread"]),
+        "price": float(event_summary["price"]),
+        "status": event_summary["status"],
+        "marketurl": event_summary["marketUrl"],
+        "time_since_start": parse_time_to_minutes(event_summary["time_since_start"]),
+        "homeoraway": tracker["homeoraway"],
+    }
+    response = db.table("game_records").insert(record).execute()
+    if response.data:
+        record.update(response.data[0])
+    else:
+        record["created_at"] = current_time.replace(microsecond=0).isoformat()
+
+    tracker["data"].append(record)
+    tracker["last_update_time"] = record["created_at"]
+
+
+def plot_live_graph(
+    original_spread,
+    gplaceholder=None,
+    data=None,
+    event_name=None,
+    homeoraway=None,
+    chart_key=None,
+):
+    graph_data = st.session_state.get("data", []) if data is None else data
+    if len(graph_data) < 1:
         st.warning("Waiting for first data point...")
         return
 
-    df = pd.DataFrame(st.session_state.data)
+    df = pd.DataFrame(graph_data)
+    event_name = event_name or st.session_state.get("event_name", "")
+    homeoraway = homeoraway or st.session_state.get("homeoraway", "")
 
     fig = go.Figure()
     fig.add_trace(go.Scatter(
@@ -79,15 +124,18 @@ def plot_live_graph(original_spread, gplaceholder):
     ))
 
     fig.update_layout(
-        title=f"Live spread of {st.session_state.event_name} - {st.session_state.homeoraway.upper()}",
+        title=f"Live spread of {event_name} - {homeoraway.upper()}",
         xaxis_title="Time",
         yaxis_title="Spread",
         template="plotly_white",
-        showlegend=False
+        showlegend=False,
+        uirevision=chart_key or f"{event_name}:{homeoraway}",
     )
 
-    # Use the persistent placeholder instead of re-rendering the container
-    gplaceholder.plotly_chart(fig, width='stretch')
+    if gplaceholder is not None:
+        gplaceholder.plotly_chart(fig, width="stretch")
+    else:
+        st.plotly_chart(fig, width="stretch", key=chart_key)
 
 def time_game_selector():
     st.title("🎯 Select Game to Track")

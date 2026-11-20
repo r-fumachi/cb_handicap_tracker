@@ -95,3 +95,14 @@ def init_session_data_from_db(event_id: int):
     else:
         st.session_state.data = []
         st.session_state.last_update_time = None
+
+def get_event_records(event_id: int):
+    resp = (
+        db
+        .table("game_records")
+        .select("*")
+        .eq("event_id", event_id)
+        .order("created_at", desc=False)
+        .execute()
+    )
+    return resp.data or []
