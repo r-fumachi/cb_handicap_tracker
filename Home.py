@@ -1,4 +1,5 @@
 import uuid
+from time import time
 
 import streamlit as st
 from streamlit_autorefresh import st_autorefresh
@@ -9,7 +10,7 @@ from cloudbet.trackplot import (
     plot_live_graph,
     update_tracker_data,
 )
-from commons import CURRENT_TIME, get_sportnames_json, parse_time_to_minutes
+from commons import get_sportnames_json, parse_time_to_minutes
 from database.client import get_user_state, save_user_state
 from utils.utils import fetch_event_data
 
@@ -104,11 +105,12 @@ if search_submitted:
     selected_sport = {
         label: key for key, label in st.session_state.sport_names.items()
     }[selected_sport_label]
+    current_time = int(time())
     st.session_state.eventData, st.session_state.gameData = searchSaveGameData(
         sport=selected_sport,
         eventName="",
-        ts=CURRENT_TIME - hours_from * 3600,
-        tf=CURRENT_TIME - hours_to * 3600,
+        ts=current_time - hours_from * 3600,
+        tf=current_time - hours_to * 3600,
     )
     st.rerun()
 

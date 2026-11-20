@@ -5,8 +5,10 @@ import uuid
 from json import dump, load
 from os import path, getcwd
 from datetime import timedelta
+from time import time
 
 dataPath = path.join(getcwd(),'cbData')
+CURRENT_TIME = int(time())
 COOKIE_KEY = st.secrets["COOKIE_KEY"]
 cookies = EncryptedCookieManager(prefix="cb_handicap", password=COOKIE_KEY)
 
